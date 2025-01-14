@@ -8,6 +8,13 @@ except ImportError:
 import logging
 import binascii
 
+try:
+    import can
+    from can import Listener
+    from can import CanError
+except ImportError:
+    print('Unable to import can')
+
 from ..sdo import SdoAbortedError
 from .. import objectdictionary
 from .. import variable
@@ -476,7 +483,8 @@ class Map(object):
         """Transmit the message once."""
         self.pdo_node.network.send_message(self.cob_id, self.data)
 
-    def start(self, period: Optional[float] = None) -> None:
+    def start(self, period: Optional[float] = None,
+              modifier_callback: Optional[Callable[[can.Message], None]] = None) -> None:
         """Start periodic transmission of message in a background thread.
 
         :param period:
@@ -496,7 +504,7 @@ class Map(object):
         logger.info("Starting %s with a period of %s seconds", self.name, self.period)
 
         self._task = self.pdo_node.network.send_periodic(
-            self.cob_id, self.data, self.period)
+            self.cob_id, self.data, self.period, modifier_callback=modifier_callback)
 
     def stop(self) -> None:
         """Stop transmission."""

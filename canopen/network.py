@@ -11,10 +11,12 @@ try:
     from can import Listener
     from can import CanError
 except ImportError:
+    print('Unable to import can')
+# except ImportError:
     # Do not fail if python-can is not installed
-    can = None
-    Listener = object
-    CanError = Exception
+#     can = None
+#     Listener = object
+#     CanError = Exception
 
 from .node import RemoteNode, LocalNode
 from .sync import SyncProducer
@@ -214,7 +216,8 @@ class Network(MutableMapping):
         self.check()
 
     def send_periodic(
-        self, can_id: int, data: bytes, period: float, remote: bool = False
+        self, can_id: int, data: bytes, period: float, remote: bool = False,
+        modifier_callback : Optional[Callable[[can.Message], None]] = None
     ) -> "PeriodicMessageTask":
         """Start sending a message periodically.
 
@@ -230,7 +233,8 @@ class Network(MutableMapping):
         :return:
             An task object with a ``.stop()`` method to stop the transmission
         """
-        return PeriodicMessageTask(can_id, data, period, self.bus, remote)
+        return PeriodicMessageTask(can_id, data, period, self.bus, remote,
+                                   modifier_callback=modifier_callback)
 
     def notify(self, can_id: int, data: bytearray, timestamp: float) -> None:
         """Feed incoming message to this library.
@@ -295,6 +299,7 @@ class PeriodicMessageTask(object):
         period: float,
         bus,
         remote: bool = False,
+        modifier_callback: Optional[Callable[[can.Message], None]] = None
     ):
         """ 
         :param can_id:
@@ -312,10 +317,13 @@ class PeriodicMessageTask(object):
                                arbitration_id=can_id,
                                data=data, is_remote_frame=remote)
         self._task = None
+        self._modifier_callback = modifier_callback
         self._start()
 
     def _start(self):
-        self._task = self.bus.send_periodic(self.msg, self.period)
+        self._task = self.bus.send_periodic(self.msg,
+                                            self.period,
+                                            modifier_callback = self._modifier_callback)
 
     def stop(self):
         """Stop transmission"""
