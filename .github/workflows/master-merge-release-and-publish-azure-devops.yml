@@ -35,9 +35,5 @@ jobs:
         created_tag: ${{ steps.tag_release_for_package.outputs.tag }}
 
   publish:
-    uses: Domin-co/ci-workflows/.github/workflows/publish-package-to-azure-devops.yml@master
-    with:
-      repository: Domin-co/ci-workflows
-      ref: master
-      token: ${{ secrets.CI_WORKFLOW_REPO_SCOPE_PAT }}
+    uses: ./.github/workflows/publish-package-to-azure-devops.yml
     secrets: inherit # Required to inherit the organisation's secrets
