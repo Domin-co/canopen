@@ -1,2 +1,5 @@
 include test/sample.eds
 include LICENSE.txt
+include requirements.txt
+include README.md
+prune tests
