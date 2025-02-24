@@ -1,0 +1,39 @@
+# github action for pull requests that target master
+# release to GitHub and publish to Azure DevOps
+
+name: Upload Python Package to Azure DevOps Artifacts
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+    - master
+    - domin/master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Tag release for package
+      id: tag_release_for_package
+      uses: K-Phoen/semver-release-action@v1.3.2
+      with:
+        release_branch: master
+        release_strategy: tag
+
+    - name: Upload release notes
+      if: steps.tag_release_for_package.outputs.tag
+      uses: Roang-zero1/github-create-release-action@v3
+      with:
+        created_tag: ${{ steps.tag_release_for_package.outputs.tag }}
+
+  publish:
+    uses: Domin-co/ci-workflows/.github/workflows/publish-package-to-azure-devops.yml@master
+    secrets: inherit # Required to inherit the organisation's secrets
