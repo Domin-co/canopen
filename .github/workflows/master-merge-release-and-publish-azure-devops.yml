@@ -36,4 +36,8 @@ jobs:
 
   publish:
     uses: Domin-co/ci-workflows/.github/workflows/publish-package-to-azure-devops.yml@master
+    with:
+      repository: Domin-co/ci-workflows
+      ref: master
+      token: ${{ secrets.CI_WORKFLOW_REPO_SCOPE_PAT }}
     secrets: inherit # Required to inherit the organisation's secrets
