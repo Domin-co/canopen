@@ -1,6 +1,32 @@
+# Build toml file for the package in combination with the setup.py file
+[project]
+name = "domin-canopen"
+version = "0.0.0"
+description = "Python package to interface can devices forked from christiansandberg/canopen"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    {name = "Christian Sandberg", email = "christiansandberg@me.com"},
+    { name = "Nick Thomas"}, {email = "nick.thomas@domin.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/Domin-co/canopen"
+Source = "https://github.com/Domin-co/canopen.git"
+Changelog = "https://github.com/Domin-co/canopen/blob/domin/master/CHANGELOG.md"
+
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-write_to = "canopen/_version.py"
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["canopen"]
+exclude = ["tests"]

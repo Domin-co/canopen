@@ -25,7 +25,7 @@ jobs:
       id: tag_release_for_package
       uses: K-Phoen/semver-release-action@v1.3.2
       with:
-        release_branch: master
+        release_branch: domin/master
         release_strategy: tag
 
     - name: Upload release notes

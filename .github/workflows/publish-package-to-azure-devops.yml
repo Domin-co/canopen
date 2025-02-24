@@ -25,14 +25,14 @@ jobs:
 
       - name: Update local master
         run: |
-          git checkout master
-          git pull origin master  # Ensure we have the latest master branch
+          git checkout domin/master
+          git pull origin domin/master  # Ensure we have the latest master branch
         
       - name: Tag release for package
         id: tag_release_for_package
         uses: K-Phoen/semver-release-action@v1.3.2
         with:
-          release_branch: master
+          release_branch: domin/master
           release_strategy: tag
           tag_format: "%major%.%minor%.%patch%"
 
