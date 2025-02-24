@@ -1,7 +1,7 @@
 # Build toml file for the package in combination with the setup.py file
 [project]
 name = "domin-canopen"
-version = "0.0.0"
+version = "2.3.1"
 description = "Python package to interface can devices forked from christiansandberg/canopen"
 readme = "README.md"
 requires-python = ">=3.9"
