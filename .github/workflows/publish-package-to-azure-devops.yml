@@ -2,6 +2,10 @@ name: Reusable Release Workflow To Upload Packages To Azure DevOps
 
 on: 
   workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 
 jobs:
   publish:
@@ -27,23 +31,12 @@ jobs:
         run: |
           git checkout domin/master
           git pull origin domin/master  # Ensure we have the latest master branch
-        
-      - name: Tag release for package
-        id: tag_release_for_package
-        uses: K-Phoen/semver-release-action@v1.3.2
-        with:
-          release_branch: domin/master
-          release_strategy: tag
-          tag_format: "%major%.%minor%.%patch%"
 
       - name: Update version in pyproject.toml
         run: |
-          NEW_VERSION="${{ steps.tag_release_for_package.outputs.tag }}"
+          NEW_VERSION="${{ inputs.version }}"
           echo "Updating pyproject.toml to version $NEW_VERSION"
           sed -i "s/version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
-          git add pyproject.toml
-          git commit -m "Update version to $NEW_VERSION"
-          git push
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt --extra-index-url ${{ secrets.AZURE_DEVOPS_EXTRA_INDEX_URL }}
           pip install build twine keyring artifacts-keyring
           
       - name: Build package

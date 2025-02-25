@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.1] - 2025-02-24
+## [2.4.0] - 2025-02-25
+
+## Changed
+
+- GitHub Actions to no longer push toml file change.
+
+## [2.3.2] - 2025-02-24
 
 ## Added
 
 - Initial release of the project.
 
 [unreleased]: https://github.com/Domin-co/canopen.git
-[0.0.1]: https://github.com/Domin-co/canopen/pull/5
+[2.4.0]: https://github.com/Domin-co/canopen/pull/6
+[2.3.2]: https://github.com/Domin-co/canopen/pull/5
