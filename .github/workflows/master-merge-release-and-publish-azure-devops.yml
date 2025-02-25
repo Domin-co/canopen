@@ -11,29 +11,46 @@ on:
     - domin/master
 
 jobs:
-  release:
+  tagging:
     runs-on: ubuntu-latest
-
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    outputs:
+      tag_version: ${{ steps.tag_release_for_release.outputs.tag }}
+      package_version: ${{ steps.tag_release_for_package.outputs.package_version }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Tag release for package
-      id: tag_release_for_package
+    - name: Tag release for release
+      id: tag_release_for_release
       uses: K-Phoen/semver-release-action@v1.3.2
       with:
         release_branch: domin/master
         release_strategy: tag
 
-    - name: Upload release notes
-      if: steps.tag_release_for_package.outputs.tag
-      uses: Roang-zero1/github-create-release-action@v3
-      with:
-        created_tag: ${{ steps.tag_release_for_package.outputs.tag }}
+    - name: Tag release for package
+      id: tag_release_for_package
+      run: |
+        PACKAGE_VERSION="${{ steps.tag_release_for_release.outputs.tag }}"
+        PACKAGE_VERSION="${PACKAGE_VERSION#v}"  # Remove leading 'v'
+        echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
-  publish:
+  ci-workflow:
+    needs: tagging
     uses: ./.github/workflows/publish-package-to-azure-devops.yml
+    with:
+      version: ${{ needs.tagging.outputs.package_version }}
     secrets: inherit # Required to inherit the organisation's secrets
+
+  create_release:
+    needs: [ci-workflow, tagging]
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ needs.tagging.outputs.tag_version }}
+        generate_release_notes: True
