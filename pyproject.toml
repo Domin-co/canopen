@@ -4,7 +4,7 @@ name = "domin-canopen"
 version = "0.0.0"
 description = "Python package to interface can devices forked from christiansandberg/canopen"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
     {name = "Christian Sandberg", email = "christiansandberg@me.com"},
@@ -28,5 +28,5 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["canopen"]
+include = ["canopen*"]
 exclude = ["tests"]
